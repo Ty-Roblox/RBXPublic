@@ -4,6 +4,7 @@ local RunService = game:GetService("RunService")
 local HttpService = game:GetService("HttpService")
 local Players = game:GetService("Players")
 local UserInputService = game:GetService("UserInputService")
+local TeleportService = game:GetService("TeleportService")
 local TweenService = game:GetService("TweenService")
 local LocalPlayer = Players.LocalPlayer or Players.PlayerAdded:Wait()
 local Mouse = LocalPlayer:GetMouse()
@@ -261,6 +262,7 @@ function Module.new(Debug)
         rconsolename('SOCKETBOT')
         Module:Print('Connected to websocket server')
     end
+    local BL = {'TPPOS', 'FOLLOW', 'TWEENPOS'}
     table.insert(shared.SocketBotConnections, shared.SocketBotStream.OnMessage:Connect(function(RawPacket)
         local DecodedPacket = HttpService:JSONDecode(RawPacket)
         if (not DecodedPacket) or (not DecodedPacket.Status) then
@@ -300,6 +302,20 @@ function Module.new(Debug)
             Module:StopTweens(shared.CurrentTweens)
             local CF = CFrame.new(Module:TableToVector(HttpService:JSONDecode(DecodedPacket.Data)))
             Module:TweenTo(CF)
+        elseif DecodedPacket.Status=='JOINSERVER' then
+            if shared.SocketMaster == LocalPlayer.Name then
+                return
+            end
+            local Tab = HttpService:JSONDecode(DecodedPacket.Data)
+            if Tab.JobId==game.JobId then
+                Module:Print('InvalidJobId: ', RawPacket)
+                return
+            end
+            if not shared.QueueOnTeleport then
+                shared.QueueOnTeleport=true
+                syn.queue_on_teleport(readfile'RBXPublic/SocketBot.lua')
+            end
+            TeleportService:TeleportToPlaceInstance(tonumber(Tab.PlaceId), Tab.JobId)
         elseif DecodedPacket.Status=='COMMUNICATION' then
             if DecodedPacket.Data=='TP' then
                 local FoundMaster = Players:FindFirstChild(shared.SocketMaster)
@@ -309,8 +325,8 @@ function Module.new(Debug)
             end
         end
         if Debug then
-            --Module:Print('GotDebugPacket: ', RawPacket)
-            --rconsoleprint('> ')
+            Module:Print('GotDebugPacket: ', RawPacket)
+            rconsoleprint('> ')
         end
     end))
     table.insert(shared.SocketBotConnections, UserInputService.InputBegan:Connect(function(Input, GPE)
@@ -346,6 +362,17 @@ function Module.new(Debug)
                     Module:Send({Status = 'SETMASTER', Data = Args[2]})
                 elseif (Args[1]=='cls' or Args[1]=='clear') then
                     rconsoleclear()
+                elseif (Args[1]=='join' or Args[1]=='joinserver') then
+                    local Data
+                    if Args[3] then
+                        Data = HttpService:JSONEncode({PlaceId=Args[2], JobId=Args[3]})
+                    elseif Args[2] then
+                        Data = HttpService:JSONEncode({PlaceId=game.PlaceId, JobId=Args[2]})
+                    else
+                        Data = HttpService:JSONEncode({PlaceId=game.PlaceId, JobId=game.JobId})
+                    end
+                    Module:Send({Status = 'JOINSERVER', Data = Data})
+                    Module:Print('PacketData: ', Data)
                 elseif (Args[1]=='postest' or Args[1]=='test') then
                     Module:Send({Status = 'LINETP', Data = Module:VectorToString(LocalPlayer.Character.PrimaryPart.Position)})
                 elseif (Args[1]=='follow' or Args[1]=='followme') then
