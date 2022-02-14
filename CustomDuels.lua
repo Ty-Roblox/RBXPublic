@@ -17,8 +17,7 @@ local function GetHandle()
     end
 end
 
-local function SpoofSword()
-    local Handle = GetHandle() or Char:WaitForChild'MatSword'
+local function SpoofSword(Handle)
     if Handle then
         if Handle.Parent:FindFirstChild'Deeznuts' then
             return
@@ -54,27 +53,13 @@ end)
 RunService.Heartbeat:Connect(function()
     local Handle = GetHandle()
     if Handle then
-        if not Handle.Parent:FindFirstChild'Deeznuts' then
-            SpoofSword()
-        end
+        SpoofSword(Handle)
         if Enabled then
             Handle.Size = Vector3.new(DefaultSize.X, DefaultSize.Y, 6)
         else
             Handle.Size = DefaultSize
         end
     end
-end)
-
-LocalPlayer.CharacterAdded:Connect(function(Char)
-    Char.ChildAdded:Connect(function()
-        task.wait()
-        SpoofSword()
-    end)
-end)
-
-Char.ChildAdded:Connect(function()
-    task.wait()
-    SpoofSword()
 end)
 
 SpoofSword()
