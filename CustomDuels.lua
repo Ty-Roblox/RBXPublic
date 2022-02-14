@@ -58,7 +58,7 @@ RunService.Heartbeat:Connect(function()
             SpoofSword()
         end
         if Enabled then
-            Handle.Size = Vector3.new(DefaultSize.X, DefaultSize.Y, 5.5)
+            Handle.Size = Vector3.new(DefaultSize.X, DefaultSize.Y, 6)
         else
             Handle.Size = DefaultSize
         end
