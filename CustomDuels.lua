@@ -19,7 +19,7 @@ local function GetHandle()
 end
 
 local function SpoofSword(Handle)
-    if Handle then
+    if Handle and Handle.Parent then
         if Handle.Parent:FindFirstChild'Deeznuts' then
             return
         end
@@ -38,6 +38,7 @@ local function SpoofSword(Handle)
         if SelectionBox then
             SelectionBox.Adornee = Clone
         end
+        warn'Spoofed Sword'
     end
 end
 
@@ -47,8 +48,10 @@ UserInputService.InputBegan:Connect(function(Input, GPE)
     end
     if Input.KeyCode==Enum.KeyCode.Q then
         Enabled = true
+        warn'Disabled'
     elseif Input.KeyCode==Enum.KeyCode.E then
         Enabled = false
+        warn'Enabled'
     end
 end)
 
