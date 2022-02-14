@@ -1,4 +1,4 @@
-local DrawingUtils = loadstring(game:HttpGet'https://pastebin.com/raw/RrtTYkWh')():New()
+local DrawingUtils = loadstring(game:HttpGet'https://raw.githubusercontent.com/Ty-Roblox/RBXPublic/main/DrawingUtils.lua')():New()
 local GameKeeper = workspace:WaitForChild'GameKeeper'
 local Map = GameKeeper:WaitForChild'Map'
 local Puzzles = GameKeeper:WaitForChild'Puzzles'
