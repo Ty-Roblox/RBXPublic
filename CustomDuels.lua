@@ -2,17 +2,18 @@ local Players = game:GetService'Players'
 local UserInputService = game:GetService'UserInputService'
 local RunService = game:GetService'RunService'
 local LocalPlayer = Players.LocalPlayer or Players.PlayerAdded:Wait()
-local Char = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
 
 local DefaultSize = Vector3.new(1, 0.8, 4)
 local Enabled = false
 
 local function GetHandle()
-    local Sword = Char:FindFirstChildWhichIsA'Tool'
-    if Sword then
-        local Handle = Sword:FindFirstChild'Handle'
-        if Handle then
-            return Handle
+    if LocalPlayer.Character then
+        local Sword = LocalPlayer.Character:FindFirstChildWhichIsA'Tool'
+        if Sword then
+            local Handle = Sword:FindFirstChild'Handle'
+            if Handle then
+                return Handle
+            end
         end
     end
 end
@@ -29,10 +30,11 @@ local function SpoofSword(Handle)
         Weld.Part0 = Handle
         Weld.Part1 = Clone
         Weld.Parent = Clone
+        Clone.Size = DefaultSize
         Clone.Parent = Handle.Parent
         Clone.Massless = true
         Handle.Massless = true
-        local SelectionBox = Handle.Parent:FindFirstChildWhichIsA'SelectionBox' or Handle.Parent:WaitForChild'Hitbox'
+        local SelectionBox = Handle.Parent:FindFirstChildWhichIsA'SelectionBox' or Handle.Parent:WaitForChild('Hitbox', 1)
         if SelectionBox then
             SelectionBox.Adornee = Clone
         end
