@@ -69,7 +69,7 @@ shared.HBCon = RunService.Heartbeat:Connect(function()
         local RealHandle = SpoofSword(Sword)
         if RealHandle then
             if Enabled then
-                RealHandle.Size = Vector3.new(DefaultSize.X, DefaultSize.Y, 6)
+                RealHandle.Size = Vector3.new(DefaultSize.X, DefaultSize.Y, 5.6)
             else
                 RealHandle.Size = DefaultSize
             end
